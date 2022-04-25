@@ -16,12 +16,9 @@ library(hrbrthemes)
 library(viridis)
 library(tseries)
 
-df <- fread('./pollutant dataframes/Sulfur_dioxide.csv')
+consider_cols <- c('Latitude','Longitude','AQI')
 
-#consider_cols <- c('Latitude','Longitude','AQI', 'month','day')
-consider_cols <- c('AQI')
-data <- subset(df, select = consider_cols)
-
+#data <- subset(df, select = consider_cols)
 #data$Latitude <- scale(data$Latitude, center = TRUE, scale = TRUE)
 #data$Longitude <- scale(data$Longitude, center = TRUE, scale = TRUE)
 #data$AQI <- scale(data$AQI, center = TRUE, scale = TRUE)
@@ -29,9 +26,12 @@ data <- subset(df, select = consider_cols)
 #data$day <- scale(data$day, center = TRUE, scale = TRUE)
 
 ################## Elbow method to find best number of clusters.################
+
+df <- fread('./pollutant dataframes/Sulfur_dioxide.csv')
 set.seed(100)
 wcss <- vector()
-for (i in 1:10) {wcss[i] <- sum(kmeans(x = data, centers = i)$withinss)}
+df_elbow <- subset(df, select = consider_cols)
+for (i in 1:10) {wcss[i] <- sum(kmeans(x = df_elbow$AQI, centers = i)$withinss)}
 
 plot(x = 1:10,
      y = wcss,
@@ -42,18 +42,35 @@ plot(x = 1:10,
      color = 'blue')
 
 ####################### K-means clustering ###########################
-set.seed(100)
-clusters <- kmeans(x = data,
-                      centers = 3,
-                      iter.max = 500,
-                      nstart = 20)
+kmeans_compute <- function (df, cols, nclusters) {
 
-########################## PLotly 3d plot ###########################
-fig <- plot_ly(data = df,
+  data <- subset(df, select = cols)
+  set.seed(100)
+  clusters <- kmeans(x = data$AQI,
+                        centers = nclusters,
+                        iter.max = 500,
+                        nstart = 20)
+
+  fig <- plot_ly(data = data,
                x = ~Latitude,
                y = ~Longitude,
                z = ~AQI,
-               color = clusters$cluster)
-               #colors = c('#BF382A', '#0C4B8E'))
-fig
+               color = as.factor(clusters$cluster),
+               colors = c("orange", "blue", "black","#c10dd1"))
+
+  return (fig)
+
+}
+########################## PLotly 3d plot for k-means ###########################
+df <- fread('./pollutant dataframes/Carbon_monoxide.csv')
+kmeans_compute(df, consider_cols, 2)
+
+df <- fread('./pollutant dataframes/Nitrogen_dioxide_(NO2).csv')
+kmeans_compute(df, consider_cols, 2)
+
+df <- fread('./pollutant dataframes/Ozone.csv')
+kmeans_compute(df, consider_cols, 4)
+
+df <- fread('./pollutant dataframes/Sulfur_dioxide.csv')
+kmeans_compute(df, consider_cols, 3)
 
