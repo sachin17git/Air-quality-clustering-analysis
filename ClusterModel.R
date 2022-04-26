@@ -14,7 +14,7 @@ library(tidyverse)
 library(hrbrthemes)
 library(viridis)
 
-consider_cols <- c('Latitude','Longitude','AQI')
+consider_cols <- c('Latitude','Longitude','AQI', 'Parameter Name')
 
 #data <- subset(df, select = consider_cols)
 #data$Latitude <- scale(data$Latitude, center = TRUE, scale = TRUE)
@@ -95,7 +95,9 @@ kmeans_compute <- function (df, cols, nclusters, pollutant) {
                y = ~Longitude,
                z = ~AQI,
                color = as.factor(cat_aqi),
-               colors = c("orange", "blue", "black","#c10dd1"))
+               colors = c("orange", "blue", "black","#c10dd1")) %>%
+    layout(title = sprintf("USA, 2021 AQI Clustering - %s",
+                           unique(data$'Parameter Name')))
 
   fig <- fig %>%
     add_trace(
