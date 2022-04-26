@@ -97,6 +97,14 @@ kmeans_compute <- function (df, cols, nclusters, pollutant) {
                color = as.factor(cat_aqi),
                colors = c("orange", "blue", "black","#c10dd1"))
 
+  fig <- fig %>%
+    add_trace(
+      marker = list(
+        opacity = 0.5,
+        size = 5
+      )
+    )
+
   return (fig)
 
 }
