@@ -1,7 +1,6 @@
 library(data.table)
 library(dplyr)
 library(cluster)
-library(fastDummies)
 library(caret)
 library(devtools)
 library(ggbiplot)
@@ -14,7 +13,6 @@ library(tidyr)
 library(tidyverse)
 library(hrbrthemes)
 library(viridis)
-library(tseries)
 
 consider_cols <- c('Latitude','Longitude','AQI')
 
@@ -41,8 +39,44 @@ plot(x = 1:10,
      ylab = "WCSS",
      color = 'blue')
 
+######################## Find category based on AQI ############################
+
+get_cat_aqi <- function (clust, aqi, nclust, pol) {
+
+  cat <- c("Very good","Good","Moderate","Unhealthy/Hazardous")
+
+  if (pol=="CO") {
+    codes <- c(2, 4)
+    for (i in 1:nclust) {
+      temp <- which(clust==i)
+      aqi[temp] <- cat[codes[i]]
+    }
+  } else if (pol=="NO2") {
+    codes <- c(2, 3)
+    for (i in 1:nclust) {
+      temp <- which(clust==i)
+      aqi[temp] <- cat[codes[i]]
+    }
+  } else if (pol=="Ozone") {
+    codes <- c(4, 3, 1, 2)
+    for (i in 1:nclust) {
+      temp <- which(clust==i)
+      aqi[temp] <- cat[codes[i]]
+    }
+  } else if (pol=="SO2") {
+    codes <- c(2, 4, 3)
+    for (i in 1:nclust) {
+      temp <- which(clust==i)
+      aqi[temp] <- cat[codes[i]]
+    }
+  }
+
+  return (aqi)
+}
+
 ####################### K-means clustering ###########################
-kmeans_compute <- function (df, cols, nclusters) {
+
+kmeans_compute <- function (df, cols, nclusters, pollutant) {
 
   data <- subset(df, select = cols)
   set.seed(100)
@@ -51,11 +85,16 @@ kmeans_compute <- function (df, cols, nclusters) {
                         iter.max = 500,
                         nstart = 20)
 
+  cat_aqi <- get_cat_aqi(clusters$cluster,
+                         data$AQI,
+                         nclusters,
+                         pollutant)
+
   fig <- plot_ly(data = data,
                x = ~Latitude,
                y = ~Longitude,
                z = ~AQI,
-               color = as.factor(clusters$cluster),
+               color = as.factor(cat_aqi),
                colors = c("orange", "blue", "black","#c10dd1"))
 
   return (fig)
@@ -63,14 +102,13 @@ kmeans_compute <- function (df, cols, nclusters) {
 }
 ########################## PLotly 3d plot for k-means ###########################
 df <- fread('./pollutant dataframes/Carbon_monoxide.csv')
-kmeans_compute(df, consider_cols, 2)
+kmeans_compute(df, consider_cols, 2, "CO")
 
 df <- fread('./pollutant dataframes/Nitrogen_dioxide_(NO2).csv')
-kmeans_compute(df, consider_cols, 2)
+kmeans_compute(df, consider_cols, 2, "NO2")
 
 df <- fread('./pollutant dataframes/Ozone.csv')
-kmeans_compute(df, consider_cols, 4)
+kmeans_compute(df, consider_cols, 4, "Ozone")
 
 df <- fread('./pollutant dataframes/Sulfur_dioxide.csv')
-kmeans_compute(df, consider_cols, 3)
-
+kmeans_compute(df, consider_cols, 3, "SO2")
