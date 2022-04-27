@@ -78,9 +78,14 @@ get_cat_aqi <- function (clust, aqi, nclust, pol) {
 
 filterPlot_maps <- function (state, df, category_aqi) {
 
-  states_indexes <- which(df$'State Name'==state)
-  data <- df[states_indexes, ]
-  new_cat_aqi <- category_aqi[states_indexes]
+  if (state!="All States") {
+    states_indexes <- which(df$'State Name'==state)
+    data <- df[states_indexes, ]
+    new_cat_aqi <- category_aqi[states_indexes]
+  } else {
+    data <- copy(df)
+    new_cat_aqi <- copy(category_aqi)
+  }
 
   fig <- data %>% plot_mapbox(lat = ~Latitude, lon = ~Longitude,
                             split = as.factor(new_cat_aqi), size=2,
@@ -168,7 +173,19 @@ filterPlot_maps(state = "California", df_co, fig_aqi_co[[2]]) # Maps for CO
 
 filterPlot_maps(state = "California", df_no, fig_aqi_no[[2]]) # Maps for No2
 
-filterPlot_maps(state = "Texas", df_ozone, fig_aqi_ozone[[2]]) # Maps for Ozone
+filterPlot_maps(state = "California", df_ozone, fig_aqi_ozone[[2]]) # Maps for Ozone
 
 filterPlot_maps(state = "Texas", df_so, fig_aqi_so[[2]]) # Maps for So2
 
+
+############################ Maps for all the states combined #############################
+
+filterPlot_maps(state = "All States", df_so, fig_aqi_so[[2]]) # Maps for all states.
+
+filterPlot_maps(state = "All States", df_co, fig_aqi_co[[2]]) # Maps for all states.
+
+filterPlot_maps(state = "All States", df_no, fig_aqi_no[[2]]) # Maps for all states.
+
+filterPlot_maps(state = "All States", df_ozone, fig_aqi_ozone[[2]]) # Maps for all states.
+
+########################### Visualizations #######################################
