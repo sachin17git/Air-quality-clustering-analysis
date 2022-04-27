@@ -74,7 +74,7 @@ get_cat_aqi <- function (clust, aqi, nclust, pol) {
   return (aqi)
 }
 
-######################### MapBox by filter state/county for dataframes ###########################
+######################### MapBox by filtering state/county for dataframes ###########################
 
 filterPlot_maps <- function (state, df, category_aqi) {
 
