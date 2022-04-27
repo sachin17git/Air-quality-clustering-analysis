@@ -107,18 +107,29 @@ kmeans_compute <- function (df, cols, nclusters, pollutant) {
       )
     )
 
-  return (fig)
+  new_list <- list(fig, cat_aqi)
+  return (new_list)
 
 }
 ########################## PLotly 3d plot for k-means ###########################
 df <- fread('./pollutant dataframes/Carbon_monoxide.csv')
-kmeans_compute(df, consider_cols, 2, "CO")
+fig_aqi <- kmeans_compute(df, consider_cols, 2, "CO")
+fig_aqi[1] #This is the figure object. Unpacking two variables present in the list. fig_aqi[2] is another variable.
 
 df <- fread('./pollutant dataframes/Nitrogen_dioxide_(NO2).csv')
-kmeans_compute(df, consider_cols, 2, "NO2")
+fig_aqi <- kmeans_compute(df, consider_cols, 2, "NO2")
+fig_aqi[1]
 
 df <- fread('./pollutant dataframes/Ozone.csv')
-kmeans_compute(df, consider_cols, 4, "Ozone")
+fig_aqi <- kmeans_compute(df, consider_cols, 4, "Ozone")
+fig_aqi[1]
 
 df <- fread('./pollutant dataframes/Sulfur_dioxide.csv')
-kmeans_compute(df, consider_cols, 3, "SO2")
+fig_aqi <- kmeans_compute(df, consider_cols, 3, "SO2")
+fig_aqi[1]
+
+########################## Visualization Maps ################################
+
+mapbox_token <- "pk.eyJ1IjoiYmFsYXN1YjQiLCJhIjoiY2wyZ3EwbGdrMDNwdDNjbnFmbGtjaHozOCJ9.v3Hi5eF-UYkbpzmqz6_Y6g"
+Sys.setenv("MAPBOX_TOKEN" = mapbox_token) # for Orca
+
