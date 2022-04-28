@@ -235,20 +235,20 @@ filterPlot_maps(state = "All States", df_ozone, fig_aqi_ozone[[2]]) # Maps for a
 ########################### Visualizations #######################################
 
 ############################ Pie Chart ######################################
-pie_chart(fig_aqi_co[[2]], df_co)
+pie_chart(fig_aqi_co[[2]], df_co) # Carbon monoxide
 
-pie_chart(fig_aqi_so[[2]], df_so)
+pie_chart(fig_aqi_so[[2]], df_so) # Sulphur dioxide
 
-pie_chart(fig_aqi_no[[2]], df_no)
+pie_chart(fig_aqi_no[[2]], df_no) # No2
 
-pie_chart(fig_aqi_ozone[[2]], df_ozone)
+pie_chart(fig_aqi_ozone[[2]], df_ozone) # Ozone
 
 ############################ Funnel Chart ##################################
 
-funnel_chart(fig_aqi_co[[2]], df_co)
+funnel_chart(fig_aqi_co[[2]], df_co) # Carbon monoxide
 
-funnel_chart(fig_aqi_so[[2]], df_so)
+funnel_chart(fig_aqi_so[[2]], df_so) # Sulphur dioxide
 
-funnel_chart(fig_aqi_no[[2]], df_no)
+funnel_chart(fig_aqi_no[[2]], df_no) # No2
 
-funnel_chart(fig_aqi_ozone[[2]], df_ozone)
+funnel_chart(fig_aqi_ozone[[2]], df_ozone) # Ozone
