@@ -25,7 +25,7 @@ consider_cols <- c('Latitude','Longitude','AQI', 'Parameter Name')
 
 ################## Elbow method to find best number of clusters.################
 
-df <- fread('./pollutant dataframes/Sulfur_dioxide.csv')
+#df <- fread('./pollutant dataframes/Sulfur_dioxide.csv')
 set.seed(100)
 wcss <- vector()
 df_elbow <- subset(df, select = consider_cols)
@@ -147,6 +147,50 @@ kmeans_compute <- function (df, cols, nclusters, pollutant) {
   return (new_list)
 
 }
+
+################################## Function for Pie Chart ############################
+
+pie_chart <- function(categories, df) {
+
+  new_d <- data.frame(category=categories,
+                      AQI=df$AQI)
+
+  new_d <- new_d %>% count(~category)
+
+  fig <- plot_ly(data = new_d,
+                 labels = ~category,
+                 values = ~freq,
+                 type = 'pie')
+
+  fig <- fig %>% layout(title = sprintf('USA, 2021 Air Quality - %s',unique(df$`Parameter Name`)),
+           xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+           yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+  return (fig)
+}
+
+############################## Function for Funnel chart  ###########################
+
+funnel_chart <- function(categories, df) {
+
+  new_d <- data.frame(category=categories,
+                      AQI=df$AQI)
+
+  new_d <- new_d %>% count(~category)
+
+  fig <- plot_ly()
+
+  fig <- fig %>% add_trace(type = "funnel",
+                           y = new_d$category,
+                           x = new_d$freq)
+
+  fig <- fig %>% layout(yaxis = list(categoryarray = new_d$category),
+                        title = sprintf('USA, 2021 AQI Funnel Chart - %s',unique(df$`Parameter Name`)))
+
+  return (fig)
+}
+
+
 ########################## PLotly 3d plot for k-means ###########################
 df_co <- fread('./pollutant dataframes/Carbon_monoxide.csv')
 fig_aqi_co <- kmeans_compute(df_co, consider_cols, 2, "CO")
@@ -189,3 +233,22 @@ filterPlot_maps(state = "All States", df_no, fig_aqi_no[[2]]) # Maps for all sta
 filterPlot_maps(state = "All States", df_ozone, fig_aqi_ozone[[2]]) # Maps for all states.
 
 ########################### Visualizations #######################################
+
+############################ Pie Chart ######################################
+pie_chart(fig_aqi_co[[2]], df_co)
+
+pie_chart(fig_aqi_so[[2]], df_so)
+
+pie_chart(fig_aqi_no[[2]], df_no)
+
+pie_chart(fig_aqi_ozone[[2]], df_ozone)
+
+############################ Funnel Chart ##################################
+
+funnel_chart(fig_aqi_co[[2]], df_co)
+
+funnel_chart(fig_aqi_so[[2]], df_so)
+
+funnel_chart(fig_aqi_no[[2]], df_no)
+
+funnel_chart(fig_aqi_ozone[[2]], df_ozone)
